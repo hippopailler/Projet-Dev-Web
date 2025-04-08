@@ -21,17 +21,98 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 .App-link {
   color: #61dafb;
 }
 
+.movies-list {
+  display: flex;
+  flex-flow: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.movie-card {
+  background-color: #282c34;
+  border-radius: 8px;
+  padding: 10px;
+  width: 200px;
+  text-align: center;
+  color: rgb(207, 207, 216);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.movie-poster {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.movie-card h3 {
+  font-size: 18px;
+  margin: 10px 0 5px;
+}
+
+.movie-card p {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.search-input {
+  padding: 10px;
+  font-size: 16px;
+  margin: 20px 0;
+  width: 80%;
+  max-width: 400px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.genre-dropdown {
+  padding: 10px;
+  font-size: 16px;
+  margin: 20px 0;
+  width: 80%;
+  max-width: 400px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.filters-container {
+  display: flex;
+  gap: 40px;
+  /* Espace entre les éléments */
+  justify-content: center;
+  /* Centre les éléments horizontalement */
+  align-items: center;
+  /* Aligne les éléments verticalement */
+  margin: 20px 0;
+  /* Espacement vertical */
+}
+
+.sort-button {
+  padding: 8px 16px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #1981bd;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.sort-button:hover {
+  background-color: #3f26d0;
+}
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

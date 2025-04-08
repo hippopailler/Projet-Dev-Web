@@ -1,0 +1,32 @@
+.add-movie-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  
+  .add-movie-input {
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .add-movie-button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #61dafb;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .movie-list {
+    margin-top: 20px;
+  }
+  
+  .movie-list ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .movie-list li {
+    margin: 5px 0;
+  }

@@ -9,37 +9,37 @@ import { appDataSource } from './datasource.js';
 
 const apiRouter = express.Router();
 
-//appDataSource
-//.initialize()
-//.then(() => {
-//console.log('Data Source has been initialized!');
-const app = express();
+appDataSource
+  .initialize()
+  .then(() => {
+    console.log('Data Source has been initialized!');
+    const app = express();
 
-app.use(logger('dev'));
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+    app.use(logger('dev'));
+    app.use(cors());
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: false }));
 
-// Register routes
-apiRouter.get('/', (req, res) => {
-  res.send('Hello from Express!');
-});
-apiRouter.use('/users', usersRouter);
-apiRouter.use('/movies', moviesRouter);
+    // Register routes
+    apiRouter.get('/', (req, res) => {
+      res.send('Hello from Express!');
+    });
+    apiRouter.use('/users', usersRouter);
+    apiRouter.use('/movies', moviesRouter);
 
-// Register API router
-app.use('/api', apiRouter);
+    // Register API router
+    app.use('/api', apiRouter);
 
-// Register 404 middleware and error handler
-app.use(routeNotFoundJsonHandler); // this middleware must be registered after all routes to handle 404 correctly
-app.use(jsonErrorHandler); // this error handler must be registered after all middleware to catch all errors
+    // Register 404 middleware and error handler
+    app.use(routeNotFoundJsonHandler); // this middleware must be registered after all routes to handle 404 correctly
+    app.use(jsonErrorHandler); // this error handler must be registered after all middleware to catch all errors
 
-const port = parseInt(process.env.PORT || '8080');
+    const port = parseInt(process.env.PORT || '8080');
 
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
-});
-//})
-//.catch((err) => {
-//console.error('Error during Data Source initialization:', err);
-//});
+    app.listen(port, () => {
+      console.log(`Server listening at http://localhost:${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Error during Data Source initialization:', err);
+  });

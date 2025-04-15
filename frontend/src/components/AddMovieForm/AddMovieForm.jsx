@@ -1,62 +1,74 @@
 import { useState } from 'react';
+import axios from 'axios';
 import './AddMovieForm.css';
 
 const DEFAULT_FORM_VALUES = {
   title: '',
-  genre: '',
+  release_date: '',
 };
 
 function AddMovieForm() {
   const [formValues, setFormValues] = useState(DEFAULT_FORM_VALUES);
-  const [movies, setMovies] = useState([]);
+  const [message, setMessage] = useState({ text: '', type: '' });
 
-  const addMovie = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (formValues.title === '' || formValues.genre === '') {
-      console.error('Il faut remplir tous les champs');
-      return;
-    }
+    try {
+      // Appel à l'API TMDB pour rechercher le film
+      const searchResponse = await axios.get(
+        `https://api.themoviedb.org/3/search/movie?api_key=522d421671cf75c2cba341597d86403a&query=${formValues.title}`,
+      );
 
-    setMovies([...movies, formValues]);
-    setFormValues(DEFAULT_FORM_VALUES);
+      if (searchResponse.data.results.length > 0) {
+        const movieData = searchResponse.data.results[0];
+
+        // Envoi des données au backend
+        await axios.post(`${import.meta.env.VITE_BACKDEND_URL}/movies/new`, {
+          title: movieData.title,
+          release_date: movieData.release_date,
+        });
+
+        setMessage({
+          text: 'Film ajouté avec succès à la base de données !',
+          type: 'success',
+        });
+        setFormValues(DEFAULT_FORM_VALUES);
+      } else {
+        setMessage({
+          text: "Film non trouvé dans l'API TMDB",
+          type: 'error',
+        });
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      setMessage({
+        text: "Erreur lors de l'ajout du film",
+        type: 'error',
+      });
+    }
   };
 
   return (
-    <div>
-      <form className="add-movie-form" onSubmit={addMovie}>
+    <div className="add-movie-form-container">
+      <form className="add-movie-form" onSubmit={handleSubmit}>
         <input
           className="add-movie-input"
           type="text"
           placeholder="Titre du film"
           value={formValues.title}
-          onChange={(event) =>
-            setFormValues({ ...formValues, title: event.target.value })
+          onChange={(e) =>
+            setFormValues({ ...formValues, title: e.target.value })
           }
-        />
-        <input
-          className="add-movie-input"
-          type="text"
-          placeholder="Genre"
-          value={formValues.genre}
-          onChange={(event) =>
-            setFormValues({ ...formValues, genre: event.target.value })
-          }
+          required
         />
         <button className="add-movie-button" type="submit">
-          Add Movie
+          Ajouter le film
         </button>
       </form>
-      <div className="movie-list">
-        <h3>Movies List</h3>
-        <ul>
-          {movies.map((movie, index) => (
-            <li key={index}>
-              {movie.title} - {movie.genre}
-            </li>
-          ))}
-        </ul>
-      </div>
+      {message.text && (
+        <div className={`message ${message.type}`}>{message.text}</div>
+      )}
     </div>
   );
 }

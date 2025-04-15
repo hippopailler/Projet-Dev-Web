@@ -43,6 +43,12 @@
   text-align: center;
   color: rgb(207, 207, 216);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.movie-card:hover {
+  transform: scale(1.05);
 }
 
 .movie-poster {
@@ -107,6 +113,101 @@
   background-color: #3f26d0;
 }
 
+.movie-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.movie-modal {
+  background-color: #282c34;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.modal-content {
+  display: flex;
+  gap: 20px;
+}
+
+.modal-image {
+  flex: 0 0 300px;
+}
+
+.modal-image img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.modal-details {
+  flex: 1;
+}
+
+.movie-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+}
+
+.action-button {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.action-button:hover {
+  transform: scale(1.2);
+}
+
+.like:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+.watch-later:hover {
+  background-color: rgba(0, 255, 255, 0.1);
+}
+
+.watched:hover {
+  background-color: rgba(0, 255, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    flex-direction: column;
+  }
+  
+  .modal-image {
+    flex: none;
+  }
+}
 
 @keyframes App-logo-spin {
   from {

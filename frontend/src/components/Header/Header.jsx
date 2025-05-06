@@ -61,7 +61,7 @@ const Header = () => {
             className="menu-item"
             onClick={() => setIsMenuOpen(false)}
           >
-            À propos
+            Exploration
           </Link>
           <Link
             to="/counter"

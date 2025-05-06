@@ -181,7 +181,7 @@ function Home() {
           </div>
           <AddMovieForm />
           {renderFilters()}
-          <h2>Films populaires</h2>
+          <h2>Parcourir les films populaires</h2>
           <div className="movies-list">
             {filteredMovies.length > 0 ? (
               filteredMovies.map((movie) => (

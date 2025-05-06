@@ -14,3 +14,16 @@
   font-weight: 700;
   color: white;
 }
+
+.logout-button {
+  background: none;
+  border: none;
+  color: #ff4444;
+  cursor: pointer;
+  font-size: inherit;
+  font-weight: 700;
+}
+
+.logout-button:hover {
+  color: #ff6666;
+}

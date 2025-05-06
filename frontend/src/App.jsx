@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import Home from './pages/Home/Home';
 import About from './pages/About/About';
 import './App.css';
@@ -8,14 +9,16 @@ import Users from './pages/Users/Users';
 
 function App() {
   return (
-    <Root>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="counter" element={<Counter />} />
-        <Route path="users" element={<Users />} />
-        <Route path="about" element={<About />} />
-      </Routes>
-    </Root>
+    <AuthProvider>
+      <Root>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="counter" element={<Counter />} />
+          <Route path="users" element={<Users />} />
+          <Route path="about" element={<About />} />
+        </Routes>
+      </Root>
+    </AuthProvider>
   );
 }
 

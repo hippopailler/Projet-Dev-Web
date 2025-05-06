@@ -1,119 +1,131 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import logo from './terresvg.svg';
-import './Home.css';
+import { useAuth } from '../../context/AuthContext';
 import AddMovieForm from '../../components/AddMovieForm/AddMovieForm';
+import bigfootLogo from './bigfoot.png';
+import bigfootTitle from './bigfoottitle.png';
+import './Home.css';
+
+// Constantes
+const API_KEY = '522d421671cf75c2cba341597d86403a';
+const API_BASE_URL = 'https://api.themoviedb.org/3';
 
 function Home() {
-  const [movies, setMovies] = useState([]); // Liste complète des films
-  const [filteredMovies, setFilteredMovies] = useState([]); // Liste des films filtrés
-  const [searchTerm, setSearchTerm] = useState(''); // Terme de recherche
-  const [genres, setGenres] = useState([]); // Liste des genres
-  const [selectedGenre, setSelectedGenre] = useState(''); // Genre sélectionné
+  // États
+  const { user } = useAuth();
+  const [movies, setMovies] = useState([]);
+  const [filteredMovies, setFilteredMovies] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [genres, setGenres] = useState([]);
+  const [selectedGenre, setSelectedGenre] = useState('');
   const [sortByVotes, setSortByVotes] = useState(false);
-  const [selectedMovie, setSelectedMovie] = useState(null); // Nouveau state pour le film sélectionné
-  const [user, setUser] = useState(null);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
-  // Fonction pour gérer le clic sur un film
-  const handleMovieClick = (movie) => {
-    setSelectedMovie(movie);
-  };
+  // Fonctions handlers
+  const handleMovieClick = (movie) => setSelectedMovie(movie);
 
-  // Fonction pour gérer l'ajout aux listes
   const handleAddToList = async (movieId, listType) => {
     if (!user) {
       alert('Veuillez vous connecter pour ajouter des films à vos listes');
+
       return;
     }
 
     try {
-      let endpoint;
-      switch (listType) {
-        case 'liked':
-          endpoint = `liked-movies`;
-          break;
-        case 'watchLater':
-          endpoint = `watch-later-movies`;
-          break;
-        case 'watched':
-          endpoint = `watched-movies`;
-          break;
-        default:
-          return;
+      const endpoints = {
+        liked: 'liked-movies',
+        watchLater: 'watch-later-movies',
+        watched: 'watched-movies',
+      };
+
+      const endpoint = endpoints[listType];
+      if (!endpoint) {
+        return;
       }
 
-      await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/users/${user.id}/${endpoint}/${movieId}`
+      const movie = movies.find((m) => m.id === movieId);
+      const response = await axios.post(
+        `http://localhost:8080/api/users/${user.id}/${endpoint}/${movieId}`,
+        {
+          title: movie.title,
+          release_date: movie.release_date,
+          poster_path: movie.poster_path,
+          overview: movie.overview,
+        },
       );
 
-      // Afficher un message de succès
-      alert(`Film ajouté avec succès à votre liste "${listType}"`);
+      if (response.status === 201) {
+        alert(`Film ajouté avec succès à votre liste "${listType}"`);
+      }
     } catch (error) {
-      console.error('Erreur:', error);
-      alert("Une erreur s'est produite lors de l'ajout du film à la liste");
+      console.error('Erreur:', error.response?.data || error);
+      alert("Une erreur s'est produite lors de l'ajout du film");
     }
   };
 
+  // Effets
   useEffect(() => {
-    console.log('Le composant Home est monté');
+    const fetchMovies = async () => {
+      try {
+        const pages = [1, 2, 3, 4, 5, 6, 17, 18, 9];
+        const responses = await Promise.all(
+          pages.map((page) =>
+            axios.get(
+              `${API_BASE_URL}/movie/popular?api_key=${API_KEY}&page=${page}`,
+            ),
+          ),
+        );
 
-    // URLs des différentes APIs
-    const apiUrls = [
-      'https://api.themoviedb.org/3/movie/popular?api_key=522d421671cf75c2cba341597d86403a&page=1',
-      'https://api.themoviedb.org/3/movie/popular?api_key=522d421671cf75c2cba341597d86403a&page=2',
-      'https://api.themoviedb.org/3/movie/popular?api_key=522d421671cf75c2cba341597d86403a&page=3',
-      'https://api.themoviedb.org/3/movie/popular?api_key=522d421671cf75c2cba341597d86403a&page=4',
-      'https://api.themoviedb.org/3/movie/popular?api_key=522d421671cf75c2cba341597d86403a&page=5',
-      'https://api.themoviedb.org/3/movie/popular?api_key=522d421671cf75c2cba341597d86403a&page=6',
-      'https://api.themoviedb.org/3/movie/popular?api_key=522d421671cf75c2cba341597d86403a&page=17',
-      'https://api.themoviedb.org/3/movie/popular?api_key=522d421671cf75c2cba341597d86403a&page=18',
-      'https://api.themoviedb.org/3/movie/popular?api_key=522d421671cf75c2cba341597d86403a&page=9',
-    ];
+        const uniqueMovies = [
+          ...new Map(
+            responses
+              .flatMap((response) => response.data.results)
+              .filter((movie) => movie?.id)
+              .map((movie) => [movie.id, movie]),
+          ).values(),
+        ];
 
-    // Appels API en parallèle pour récupérer les films
-    Promise.all(
-      apiUrls.map((url) => fetch(url).then((response) => response.json())),
-    )
-      .then((results) => {
-        const combinedMovies = results.flatMap((result) => result.results);
-        setMovies(combinedMovies); // Stocke la liste complète des films
-        setFilteredMovies(combinedMovies); // Initialise la liste filtrée
-      })
-      .catch((error) => {
-        console.error('Erreur lors de la récupération des films :', error);
-      });
+        setMovies(uniqueMovies);
+        setFilteredMovies(uniqueMovies);
+      } catch (error) {
+        console.error('Erreur récupération films:', error);
+      }
+    };
 
-    // Appel API pour récupérer les genres
-    fetch(
-      'https://api.themoviedb.org/3/genre/movie/list?api_key=522d421671cf75c2cba341597d86403a',
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setGenres(data.genres); // Stocke la liste des genres
-      })
-      .catch((error) => {
-        console.error('Erreur lors de la récupération des genres :', error);
-      });
+    const fetchGenres = async () => {
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/genre/movie/list?api_key=${API_KEY}`,
+        );
+        setGenres(response.data.genres);
+      } catch (error) {
+        console.error('Erreur récupération genres:', error);
+      }
+    };
+
+    fetchMovies();
+    fetchGenres();
   }, []);
 
-  // Filtrer les films en fonction du terme de recherche et du genre sélectionné
+  // Effet de filtrage
   useEffect(() => {
-    let filtered = movies;
+    let filtered = [...movies];
 
-    // Filtrer par genre si un genre est sélectionné
     if (selectedGenre) {
       filtered = filtered.filter((movie) =>
-        movie.genre_ids.includes(parseInt(selectedGenre)),
+        movie.genre_ids?.includes(parseInt(selectedGenre)),
       );
     }
 
-    // Filtrer par terme de recherche
-    if (searchTerm) {
+    if (searchTerm.trim()) {
+      const searchTermLower = searchTerm.toLowerCase().trim();
       filtered = filtered.filter((movie) =>
-        movie.title.toLowerCase().includes(searchTerm.toLowerCase()),
+        movie.title?.toLowerCase().includes(searchTermLower),
       );
     }
+
     if (sortByVotes) {
       filtered.sort((a, b) => b.vote_count - a.vote_count);
     }
@@ -121,87 +133,103 @@ function Home() {
     setFilteredMovies(filtered);
   }, [movies, searchTerm, selectedGenre, sortByVotes]);
 
+  const renderFilters = () => (
+    <div className="filters-container">
+      <input
+        type="text"
+        placeholder="Rechercher un film ..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="search-input"
+      />
+      <select
+        value={selectedGenre}
+        onChange={(e) => setSelectedGenre(e.target.value)}
+        className="genre-dropdown"
+      >
+        <option value="">Tous les genres</option>
+        {genres.map((genre) => (
+          <option key={genre.id} value={genre.id}>
+            {genre.name}
+          </option>
+        ))}
+      </select>
+      <button
+        onClick={() => setSortByVotes(!sortByVotes)}
+        className="sort-button"
+      >
+        {sortByVotes ? 'Ordre initial' : 'Trier par popularité'}
+      </button>
+    </div>
+  );
+
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Bienvenue sur Bigfoot2</h1>
-        <img src={logo} className="App-logo" alt="logo" />
-        <AddMovieForm />
-
-        {/*on englobe le champ de recherche et le menu déroulant dans une div pour leur appliquer une mise en page particulière*/}
-        <div className="filters-container">
-          {/* Champ de recherche */}
-          <input
-            type="text"
-            placeholder="Rechercher un film ..."
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-            className="search-input"
-          />
-
-          {/* Menu déroulant pour les genres */}
-          <select
-            value={selectedGenre}
-            onChange={(event) => setSelectedGenre(event.target.value)}
-            className="genre-dropdown"
-          >
-            <option value="">Tous les genres</option>
-            {genres.map((genre) => (
-              <option key={genre.id} value={genre.id}>
-                {genre.name}
-              </option>
-            ))}
-          </select>
-          <button
-            onClick={() => setSortByVotes(!sortByVotes)}
-            className="sort-button"
-          >
-            {sortByVotes ? 'Ordre initial' : 'Trier par popularité'}
-          </button>
-        </div>
-
-        {/* Affichage des films populaires */}
-        <h2>Films populaires</h2>
-        <div className="movies-list">
-          {filteredMovies.length > 0 ? (
-            filteredMovies.map((movie) => (
-              <div key={movie.id} className="movie-card">
-                <img
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                  alt={movie.title}
-                  className="movie-poster"
-                />
-                <h3>{movie.title}</h3>
-                <p>Date de sortie : {movie.release_date}</p>
-                <p>Note moyenne : {movie.vote_average} / 10</p>
-                <div className="movie-actions">
-                  <button 
-                    className="action-button like"
-                    onClick={() => handleAddToList(movie.id, 'liked')}
-                    title="Ajouter aux favoris"
+        <div className="content-container">
+          <div className="header-banner">
+            <img
+              src={bigfootLogo}
+              alt="Bigfoot Logo"
+              className="bigfoot-logo"
+            />
+            <img
+              src={bigfootTitle}
+              alt="Bigfoot Title"
+              className="bigfoot-title"
+            />
+          </div>
+          <AddMovieForm />
+          {renderFilters()}
+          <h2>Films populaires</h2>
+          <div className="movies-list">
+            {filteredMovies.length > 0 ? (
+              filteredMovies.map((movie) => (
+                <div
+                  key={movie.id}
+                  className="movie-card"
+                  onClick={() => handleMovieClick(movie)}
+                >
+                  <img
+                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                    alt={movie.title}
+                    className="movie-poster"
+                  />
+                  <h3>{movie.title}</h3>
+                  <p>Date de sortie : {movie.release_date}</p>
+                  <p>Note moyenne : {movie.vote_average} / 10</p>
+                  <div
+                    className="movie-actions"
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    ❤️
-                  </button>
-                  <button 
-                    className="action-button watch-later"
-                    onClick={() => handleAddToList(movie.id, 'watchLater')}
-                    title="À voir plus tard"
-                  >
-                    🕒
-                  </button>
-                  <button 
-                    className="action-button watched"
-                    onClick={() => handleAddToList(movie.id, 'watched')}
-                    title="Déjà vu"
-                  >
-                    ✅
-                  </button>
+                    <button
+                      className="action-button like"
+                      onClick={() => handleAddToList(movie.id, 'liked')}
+                      title="Ajouter aux favoris"
+                    >
+                      ❤️
+                    </button>
+                    <button
+                      className="action-button watch-later"
+                      onClick={() => handleAddToList(movie.id, 'watchLater')}
+                      title="À voir plus tard"
+                    >
+                      🕒
+                    </button>
+                    <button
+                      className="action-button watched"
+                      onClick={() => handleAddToList(movie.id, 'watched')}
+                      title="Déjà vu"
+                    >
+                      ✅
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))
-          ) : (
-            <p>Aucun film trouvé pour les critères sélectionnés.</p>
-          )}
+              ))
+            ) : (
+              <p>Aucun film trouvé pour les critères sélectionnés.</p>
+            )}
+          </div>
         </div>
 
         {/* Modal des détails du film */}

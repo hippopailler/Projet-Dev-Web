@@ -6,11 +6,8 @@
   "scripts": {
     "dev": "dotenv -- nodemon --experimental-modules ./server.js",
     "start": "dotenv -- node --experimental-modules ./server.js",
-    "lint": "eslint . --fix",
-    "migration:generate": "dotenv -- typeorm --dataSource='./datasource.js' migration:generate --outputJs --pretty migrations/$npm_config_name",
-    "postmigration:generate": "./postmigration.sh",
-    "migration:run": "dotenv -- typeorm --dataSource='./datasource.js' migration:run",
-    "migration:revert": "dotenv -- typeorm --dataSource='./datasource.js' migration:revert"
+    "build": "npm install",
+    "vercel-build": "echo 'Building...'"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -29,3 +26,4 @@
     "prettier": "^3.2.5"
   }
 }
+

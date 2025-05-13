@@ -2,10 +2,21 @@ import typeorm from "typeorm";
 
 const { MigrationInterface, QueryRunner } = typeorm;
 
-export default class UpdateUserWithMovieLists1744711558903 {
-    name = 'UpdateUserWithMovieLists1744711558903'
+export default class InitialSchema1744733182551 {
+    name = 'InitialSchema1744733182551'
 
     async up(queryRunner) {
+        await queryRunner.query(`
+            CREATE TABLE "user" (
+                "id" SERIAL NOT NULL,
+                "email" character varying NOT NULL,
+                "password" character varying NOT NULL,
+                "firstname" character varying NOT NULL,
+                "lastname" character varying NOT NULL,
+                CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"),
+                CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id")
+            )
+        `);
         await queryRunner.query(`
             CREATE TABLE "movie" (
                 "id" SERIAL NOT NULL,
@@ -16,7 +27,7 @@ export default class UpdateUserWithMovieLists1744711558903 {
         `);
         await queryRunner.query(`
             CREATE TABLE "user_liked_movies_movie" (
-                "userId" character varying NOT NULL,
+                "userId" integer NOT NULL,
                 "movieId" integer NOT NULL,
                 CONSTRAINT "PK_7adad71ba92731c7625fd2c328c" PRIMARY KEY ("userId", "movieId")
             )
@@ -29,7 +40,7 @@ export default class UpdateUserWithMovieLists1744711558903 {
         `);
         await queryRunner.query(`
             CREATE TABLE "user_watch_later_movies_movie" (
-                "userId" character varying NOT NULL,
+                "userId" integer NOT NULL,
                 "movieId" integer NOT NULL,
                 CONSTRAINT "PK_29d7d36edc363b9f6af60bca3cd" PRIMARY KEY ("userId", "movieId")
             )
@@ -42,7 +53,7 @@ export default class UpdateUserWithMovieLists1744711558903 {
         `);
         await queryRunner.query(`
             CREATE TABLE "user_watched_movies_movie" (
-                "userId" character varying NOT NULL,
+                "userId" integer NOT NULL,
                 "movieId" integer NOT NULL,
                 CONSTRAINT "PK_77f4b1d555a0f485bab6b20edae" PRIMARY KEY ("userId", "movieId")
             )
@@ -52,10 +63,6 @@ export default class UpdateUserWithMovieLists1744711558903 {
         `);
         await queryRunner.query(`
             CREATE INDEX "IDX_7e9b8d6ee53233664f40672934" ON "user_watched_movies_movie" ("movieId")
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "user"
-            ADD "password" character varying NOT NULL
         `);
         await queryRunner.query(`
             ALTER TABLE "user_liked_movies_movie"
@@ -103,9 +110,6 @@ export default class UpdateUserWithMovieLists1744711558903 {
             ALTER TABLE "user_liked_movies_movie" DROP CONSTRAINT "FK_bc3a33713de6afdb5341a6b7ed5"
         `);
         await queryRunner.query(`
-            ALTER TABLE "user" DROP COLUMN "password"
-        `);
-        await queryRunner.query(`
             DROP INDEX "public"."IDX_7e9b8d6ee53233664f40672934"
         `);
         await queryRunner.query(`
@@ -134,6 +138,9 @@ export default class UpdateUserWithMovieLists1744711558903 {
         `);
         await queryRunner.query(`
             DROP TABLE "movie"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "user"
         `);
     }
 }

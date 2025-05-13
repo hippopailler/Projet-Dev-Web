@@ -5,16 +5,23 @@ const User = new typeorm.EntitySchema({
   columns: {
     id: {
       primary: true,
-      generated: 'uuid',
-      type: String,
+      type: 'int',
+      generated: true,
     },
     email: {
       type: String,
       unique: true,
     },
-    firstname: { type: String },
-    lastname: { type: String },
-    password: { type: String }, // Pour l'authentification
+    password: {
+      type: String,  // Ajout du champ password
+      nullable: false,
+    },
+    firstname: {
+      type: String,
+    },
+    lastname: {
+      type: String,
+    },
   },
   relations: {
     likedMovies: {

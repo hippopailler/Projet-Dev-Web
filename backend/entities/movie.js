@@ -10,13 +10,37 @@ const Movie = new typeorm.EntitySchema({
     },
     title: {
       type: String,
-      nullable: false,
     },
     release_date: {
-      type: Date,
+      type: 'timestamp',
       nullable: true,
     },
+    poster_path: {
+      type: String,
+      nullable: true,
+    },
+    overview: {
+      type: String,
+      nullable: true,
+    }
   },
+  relations: {
+    usersLiked: {
+      type: 'many-to-many',
+      target: 'User',
+      inverseSide: 'likedMovies',
+    },
+    usersWatchLater: {
+      type: 'many-to-many',
+      target: 'User',
+      inverseSide: 'watchLaterMovies',
+    },
+    usersWatched: {
+      type: 'many-to-many',
+      target: 'User',
+      inverseSide: 'watchedMovies',
+    }
+  }
 });
 
 export default Movie;

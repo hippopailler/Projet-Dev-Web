@@ -1,0 +1,64 @@
+.movie-card {
+  background-color: rgba(52, 40, 40, 0.7);
+  border-radius: 8px;
+  padding: 10px;
+  width: 200px;
+  text-align: center;
+  color: rgb(207, 207, 216);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.2s;
+  backdrop-filter: blur(5px);
+}
+
+.movie-card:hover {
+  transform: scale(1.05);
+}
+
+.movie-poster {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.movie-card h3 {
+  font-size: 18px;
+  margin: 10px 0 5px;
+}
+
+.movie-card p {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.movie-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+}
+
+.action-button {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.action-button:hover {
+  transform: scale(1.2);
+}
+
+.like:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+.watch-later:hover {
+  background-color: rgba(0, 255, 255, 0.1);
+}
+
+.watched:hover {
+  background-color: rgba(0, 255, 0, 0.1);
+}

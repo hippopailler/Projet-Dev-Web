@@ -1,172 +1,39 @@
-.users-page {
-  padding: 20px;
+.users-container {
+  padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.login-container {
-  max-width: 400px;
-  margin: 40px auto;
-  padding: 20px;
-  background-color: #1a1a1a;
-  border-radius: 8px;
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.login-form input {
-  padding: 10px;
-  border-radius: 4px;
-  border: 1px solid #444;
-  background-color: #333;
-  color: white;
-}
-
-.login-form button {
-  padding: 10px;
-  background-color: #61dafb;
-  border: none;
-  border-radius: 4px;
-  color: black;
-  cursor: pointer;
+  min-height: calc(100vh - 60px);
 }
 
 .user-profile {
-  padding: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+.user-profile h2 {
+  color: white;
+  margin-bottom: 2rem;
+  font-size: 2rem;
 }
 
 .movie-lists {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 2rem;
 }
 
-.movie-list {
-  background-color: #1a1a1a;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-.movies-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 20px;
-  padding: 20px;
-}
-
-.movie-card {
-  position: relative;
-  background: #1a1a1a;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.2s;
-}
-
-.movie-card:hover {
-  transform: scale(1.03);
-}
-
-.movie-card img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.movie-info {
-  padding: 10px;
-}
-
-.movie-card h4 {
-  padding: 10px;
-  margin: 0;
-  font-size: 14px;
-}
-
-.movie-info h4 {
-  margin: 0;
-  font-size: 14px;
-  color: white;
-}
-
-.movie-info p {
-  margin: 5px 0 0;
-  font-size: 12px;
-  color: #999;
-}
-
-.remove-button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(255, 0, 0, 0.8);
-  border: none;
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.movie-card:hover .remove-button {
-  opacity: 1;
-}
-
-.empty-list {
+.loading {
   text-align: center;
-  color: #666;
-  padding: 20px;
-}
-
-.auth-container {
-  max-width: 400px;
-  margin: 40px auto;
-}
-
-.register-container {
-  background-color: #1a1a1a;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-.register-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.register-form input {
-  padding: 10px;
-  border-radius: 4px;
-  border: 1px solid #444;
-  background-color: #333;
   color: white;
+  font-size: 1.2rem;
+  padding: 2rem;
 }
 
-.switch-auth-button {
-  margin-top: 15px;
-  background: none;
-  border: none;
-  color: #61dafb;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.error-message {
-  color: #ff4444;
-  background-color: rgba(255, 0, 0, 0.1);
-  padding: 10px;
-  margin: 10px 0;
+.error {
+  background-color: rgba(255, 0, 0, 0.2);
+  color: #ff0000;
+  padding: 1rem;
   border-radius: 4px;
-  border: 1px solid #ff4444;
-  text-align: center;
+  margin-bottom: 1rem;
 }

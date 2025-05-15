@@ -32,19 +32,58 @@ function Users() {
     setLoading(true);
 
     try {
-      console.log('Login attempt with:', loginForm);
+      console.log('🔑 Tentative de connexion avec:', loginForm);
+
+      // Validation côté client
+      if (!loginForm.email || !loginForm.password) {
+        setError('Email et mot de passe requis');
+        setLoading(false);
+
+        return;
+      }
+
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/users/login`,
-        loginForm
+        loginForm,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          // Ajout pour débugger
+          validateStatus: (status) => {
+            console.log('📡 Status reçu:', status);
+
+            return true; // Pour voir toutes les réponses
+          },
+        }
       );
 
-      if (response.data.user) {
-        console.log('Login successful:', response.data.user);
-        login(response.data.user);
+      console.log('📥 Réponse complète:', response);
+
+      if (response.status !== 200) {
+        throw new Error(`Erreur ${response.status}: ${response.data.message || 'Erreur inconnue'}`);
       }
+
+      if (!response.data.user) {
+        throw new Error('Aucune donnée utilisateur reçue');
+      }
+
+      console.log('✅ Connexion réussie:', response.data.user);
+      login(response.data.user);
+      setError('');
+
     } catch (err) {
-      console.error('Login error:', err);
-      setError(err.response?.data?.message || 'Erreur de connexion');
+      console.error('❌ Erreur détaillée:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status
+      });
+      
+      setError(
+        err.response?.data?.message || 
+        err.message || 
+        'Erreur de connexion'
+      );
     } finally {
       setLoading(false);
     }
@@ -56,19 +95,30 @@ function Users() {
     setLoading(true);
 
     try {
-      console.log('Register attempt with:', registerForm);
+      console.log('📝 Tentative inscription avec:', registerForm);
+      
+      // Validation côté client
+      if (!registerForm.email || !registerForm.password || !registerForm.firstname || !registerForm.lastname) {
+        setError('Tous les champs sont obligatoires');
+        setLoading(false);
+
+        return;
+      }
+
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/users/new`,
         registerForm
       );
 
+      console.log('✅ Réponse inscription:', response.data);
+
       if (response.data.user) {
-        console.log('Registration successful:', response.data.user);
         login(response.data.user);
+        setError('');
       }
     } catch (err) {
-      console.error('Register error:', err);
-      setError(err.response?.data?.message || "Erreur d'inscription");
+      console.error('❌ Erreur inscription:', err.response?.data || err);
+      setError(err.response?.data?.message || "Erreur lors de l'inscription");
     } finally {
       setLoading(false);
     }
@@ -165,17 +215,89 @@ function Users() {
             title="Films favoris"
             movies={movieLists.liked}
             onRemove={(movieId) => handleRemoveMovie(movieId, 'liked')}
-          />
+          >
+            <div className="user-movie-list">
+              <h3>Films favoris</h3>
+              <div className="user-movies-scroll">
+                {movieLists.liked.map(movie => (
+                  <div key={movie.id} className="movie-card">
+                    <button
+                      className="remove-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveMovie(movie.id, 'liked');
+                      }}
+                      title="Retirer de la liste"
+                    >
+                      ×
+                    </button>
+                    {movie.poster_path ? (
+                      <img
+                        src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
+                        alt={movie.title}
+                        className="movie-poster"
+                      />
+                    ) : (
+                      <div className="no-poster">{movie.title[0]}</div>
+                    )}
+                    <div className="movie-info">
+                      <h3>{movie.title}</h3>
+                      <p>{movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A'}</p>
+                      <p>⭐ {movie.vote_average?.toFixed(1) || 'N/A'}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </MovieList>
           <MovieList
             title="À voir plus tard"
             movies={movieLists.watchLater}
             onRemove={(movieId) => handleRemoveMovie(movieId, 'watch-later')}
-          />
+          >
+            <div className="user-movie-list">
+              <h3>À voir plus tard</h3>
+              <div className="user-movies-scroll">
+                {movieLists.watchLater.map(movie => (
+                  <div key={movie.id} className="movie-card">
+                    {movie.poster_path ? (
+                      <img
+                        src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
+                        alt={movie.title}
+                        className="movie-poster"
+                      />
+                    ) : (
+                      <div className="no-poster">{movie.title[0]}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </MovieList>
           <MovieList
             title="Films vus"
             movies={movieLists.watched}
             onRemove={(movieId) => handleRemoveMovie(movieId, 'watched')}
-          />
+          >
+            <div className="user-movie-list">
+              <h3>Films vus</h3>
+              <div className="user-movies-scroll">
+                {movieLists.watched.map(movie => (
+                  <div key={movie.id} className="movie-card">
+                    {movie.poster_path ? (
+                      <img
+                        src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
+                        alt={movie.title}
+                        className="movie-poster"
+                      />
+                    ) : (
+                      <div className="no-poster">{movie.title[0]}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </MovieList>
         </div>
       </div>
     </div>

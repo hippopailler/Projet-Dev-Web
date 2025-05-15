@@ -1,21 +1,21 @@
 import { DataSource } from 'typeorm';
+import dotenv from 'dotenv';
+import User from './entities/user.js';
+import Movie from './entities/movie.js';
+
+dotenv.config();
 
 export const appDataSource = new DataSource({
   type: 'postgres',
   host: process.env.DATABASE_POSTGRES_HOST,
-  port: process.env.DATABASE_PORT,
+  port: parseInt(process.env.DATABASE_PORT),
   username: process.env.DATABASE_POSTGRES_USER,
   password: process.env.DATABASE_POSTGRES_PASSWORD,
   database: process.env.DATABASE_POSTGRES_DATABASE,
   synchronize: false,
-  entities: ['entities/*.js'],
-  migrations: ['migrations/*.js'],
-  cli: {
-    migrationsDir: 'migrations',
+  logging: true,
+  ssl: {
+    rejectUnauthorized: false
   },
-  extra: {
-    ssl: {
-      rejectUnauthorized: false,
-    },
-  },
+  entities: [User, Movie], // Ajout des entités ici
 });

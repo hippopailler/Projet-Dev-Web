@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable padding-line-between-statements */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect, useState } from 'react';
@@ -21,6 +23,30 @@ function About() {
   });
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Fonction pour ajouter un film à une liste
+  const handleAddToList = async (movie, listType) => {
+    if (!user) {
+      alert('Veuillez vous connecter pour ajouter des films à vos listes');
+      return;
+    }
+
+    const endpoints = {
+      liked: 'liked-movies',
+      watchLater: 'watch-later-movies',
+      watched: 'watched-movies',
+    };
+
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/users/${user.id}/${endpoints[listType]}/${movie.id}`,
+        movie
+      );
+      alert(`Film ajouté à votre liste "${listType}"`);
+    } catch (error) {
+      alert("Erreur lors de l'ajout du film");
+    }
+  };
 
   // Récupération des films par catégorie
   useEffect(() => {
@@ -163,6 +189,31 @@ function About() {
                   <strong>Note :</strong>{' '}
                   {selectedMovie.vote_average.toFixed(1)}/10
                 </p>
+                {user && (
+                  <div className="movie-actions" style={{ display: 'flex', gap: '10px', margin: '10px 0' }}>
+                    <button
+                      className="action-button like"
+                      title="Ajouter aux favoris"
+                      onClick={() => handleAddToList(selectedMovie, 'liked')}
+                    >
+                      ❤️
+                    </button>
+                    <button
+                      className="action-button watch-later"
+                      title="À voir plus tard"
+                      onClick={() => handleAddToList(selectedMovie, 'watchLater')}
+                    >
+                      🕒
+                    </button>
+                    <button
+                      className="action-button watched"
+                      title="Déjà vu"
+                      onClick={() => handleAddToList(selectedMovie, 'watched')}
+                    >
+                      ✅
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

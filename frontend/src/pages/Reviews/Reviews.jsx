@@ -1,18 +1,30 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
+/* eslint-disable no-shadow */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 import './Reviews.css';
 
-const MovieSelector = ({ movies, onSelect, onClose }) => (
+const MovieSelector = ({
+  movies,
+  searchTerm,
+  onSearchChange,
+  onSelect,
+  onClose,
+}) => (
   <div className="movie-selector-modal">
     <div className="movie-selector-content">
-      <button className="close-button" onClick={onClose}>×</button>
+      <button className="close-button" onClick={onClose}>
+        ×
+      </button>
       <h3>Sélectionner un film</h3>
+      <MovieSearchBar searchTerm={searchTerm} onSearchChange={onSearchChange} />
       <div className="movies-grid">
         {movies.map((movie) => (
-          <div 
-            key={movie.id} 
+          <div
+            key={movie.id}
             className="movie-select-card"
             onClick={() => onSelect(movie)}
           >
@@ -31,6 +43,17 @@ const MovieSelector = ({ movies, onSelect, onClose }) => (
   </div>
 );
 
+const MovieSearchBar = ({ searchTerm, onSearchChange }) => (
+  <div className="movie-search-bar">
+    <input
+      type="text"
+      placeholder="Rechercher un film..."
+      value={searchTerm}
+      onChange={(e) => onSearchChange(e.target.value)}
+    />
+  </div>
+);
+
 function Reviews() {
   const { user } = useAuth();
   const [reviews, setReviews] = useState([]);
@@ -44,6 +67,8 @@ function Reviews() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showMovieSelector, setShowMovieSelector] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredMovies, setFilteredMovies] = useState([]);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -52,7 +77,7 @@ function Reviews() {
         setError(null);
         console.log('Tentative de récupération des reviews...');
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/reviews`
+          `${import.meta.env.VITE_BACKEND_URL}/reviews`,
         );
         console.log('Reviews reçues:', response.data);
         setReviews(response.data);
@@ -67,12 +92,13 @@ function Reviews() {
     fetchReviews();
   }, []);
 
-  // Ajoutez cette fonction pour charger les films
   const fetchMovies = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/movies`);
-      // Correction ici :
-      setMovies(response.data.movies); // et non response.data
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/movies`,
+      );
+
+      setMovies(response.data.movies);
     } catch (error) {
       console.error('Erreur chargement films:', error);
     }
@@ -81,18 +107,32 @@ function Reviews() {
   // Ajoutez cette fonction pour sélectionner un film
   const handleMovieSelect = (movie) => {
     setSelectedMovie(movie);
-    setNewReview(prev => ({ ...prev, movie_id: movie.id }));
+    setNewReview((prev) => ({ ...prev, movie_id: movie.id }));
     setShowMovieSelector(false);
   };
+
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredMovies(movies);
+    } else {
+      setFilteredMovies(
+        movies.filter((movie) =>
+          movie.title.toLowerCase().includes(searchTerm.toLowerCase()),
+        ),
+      );
+    }
+  }, [searchTerm, movies]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
       alert('Veuillez vous connecter pour publier une critique');
+
       return;
     }
     if (!selectedMovie) {
       alert('Veuillez sélectionner un film');
+
       return;
     }
 
@@ -105,11 +145,14 @@ function Reviews() {
           movie_id: selectedMovie.id,
         },
       );
-      setReviews([{
-        ...response.data,
-        user: { firstname: user.firstname, lastname: user.lastname },
-        movie: selectedMovie
-      }, ...reviews]);
+      setReviews([
+        {
+          ...response.data,
+          user: { firstname: user.firstname, lastname: user.lastname },
+          movie: selectedMovie,
+        },
+        ...reviews,
+      ]);
       setNewReview({ content: '', rating: 5, movie_id: null });
       setSelectedMovie(null);
     } catch (error) {
@@ -121,9 +164,7 @@ function Reviews() {
     return (
       <div className="reviews-container">
         <h1 className="page-title">Critiques de Films</h1>
-        <div className="error-message">
-          Une erreur est survenue: {error}
-        </div>
+        <div className="error-message">Une erreur est survenue: {error}</div>
       </div>
     );
   }
@@ -136,8 +177,8 @@ function Reviews() {
         <div className="review-form-container">
           <h2>Écrire une critique</h2>
           <form onSubmit={handleSubmit} className="review-form">
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="select-movie-btn"
               onClick={() => {
                 setShowMovieSelector(true);
@@ -149,7 +190,9 @@ function Reviews() {
 
             {showMovieSelector && (
               <MovieSelector
-                movies={movies}
+                movies={filteredMovies}
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
                 onSelect={handleMovieSelect}
                 onClose={() => setShowMovieSelector(false)}
               />

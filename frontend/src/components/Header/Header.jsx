@@ -64,11 +64,11 @@ const Header = () => {
             Exploration
           </Link>
           <Link
-            to="/counter"
+            to="/reviews"
             className="menu-item"
             onClick={() => setIsMenuOpen(false)}
           >
-            Counter
+            Critiques
           </Link>
           {user && (
             <button

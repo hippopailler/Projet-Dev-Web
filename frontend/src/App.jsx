@@ -4,7 +4,7 @@ import Home from './pages/Home/Home';
 import About from './pages/About/About';
 import './App.css';
 import { Root } from './components/Root/Root';
-import Counter from './pages/Counter/Counter';
+import Reviews from './pages/Reviews/Reviews';
 import Users from './pages/Users/Users';
 
 function App() {
@@ -13,7 +13,7 @@ function App() {
       <Root>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="counter" element={<Counter />} />
+          <Route path="reviews" element={<Reviews />} />
           <Route path="users" element={<Users />} />
           <Route path="about" element={<About />} />
         </Routes>

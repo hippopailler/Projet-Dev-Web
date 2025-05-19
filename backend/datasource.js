@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 import dotenv from 'dotenv';
 import User from './entities/user.js';
 import Movie from './entities/movie.js';
+import Review from './entities/review.js';
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ export const appDataSource = new DataSource({
   synchronize: false,
   logging: true,
   ssl: {
-    rejectUnauthorized: false
+    rejectUnauthorized: false,
   },
-  entities: [User, Movie], // Ajout des entités ici
+  entities: [User, Movie, Review],
 });

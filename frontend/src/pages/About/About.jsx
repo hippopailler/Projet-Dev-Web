@@ -23,7 +23,11 @@ function About() {
   });
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [language, setLanguage] = useState('fr'); // 'fr' pour français, 'en' pour anglais
+  const pageTitles = {
+  fr: "Découvrez Notre Sélection",
+  en: "Discover Our Selection"
+};
   // Fonction pour ajouter un film à une liste
   const handleAddToList = async (movie, listType) => {
     if (!user) {
@@ -56,25 +60,25 @@ function About() {
         const [trending, topRated, action, comedy, horror, romance, scifi] =
           await Promise.all([
             axios.get(
-              `${API_BASE_URL}/trending/movie/week?api_key=${API_KEY}&language=fr-FR`,
+              `${API_BASE_URL}/trending/movie/week?api_key=${API_KEY}&language=${language}-${language.toUpperCase()}`,
             ),
             axios.get(
-              `${API_BASE_URL}/movie/top_rated?api_key=${API_KEY}&language=fr-FR`,
+              `${API_BASE_URL}/movie/top_rated?api_key=${API_KEY}&language=${language}-${language.toUpperCase()}`,
             ),
             axios.get(
-              `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=28&language=fr-FR`,
+              `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=28&language=${language}-${language.toUpperCase()}`,
             ),
             axios.get(
-              `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=35&language=fr-FR`,
+              `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=35&language=${language}-${language.toUpperCase()}`,
             ),
             axios.get(
-              `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=27&language=fr-FR`,
+              `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=27&language=${language}-${language.toUpperCase()}`,
             ),
             axios.get(
-              `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=10749&language=fr-FR`,
+              `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=10749&language=${language}-${language.toUpperCase()}`,
             ),
             axios.get(
-              `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=878&language=fr-FR`,
+              `${API_BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=878&language=${language}-${language.toUpperCase()}`,
             ),
           ]);
 
@@ -95,7 +99,7 @@ function About() {
     };
 
     fetchMovies();
-  }, []);
+  }, [language]);
 
   // Composant pour une rangée de films
   const MovieRow = ({ title, movies }) => (
@@ -125,19 +129,30 @@ function About() {
 
   // Traduction des catégories
   const categoryTitles = {
-    trending: 'Tendances de la semaine',
-    topRated: 'Les mieux notés',
-    action: 'Action',
-    comedy: 'Comédie',
-    horror: 'Horreur',
-    romance: 'Romance',
-    scienceFiction: 'Science Fiction',
+    fr: {
+      trending: 'Tendances de la semaine',
+      topRated: 'Les mieux notés',
+      action: 'Action',
+      comedy: 'Comédie',
+      horror: 'Horreur',
+      romance: 'Romance',
+      scienceFiction: 'Science Fiction',
+    },
+    en: {
+      trending: 'Trending this week',
+      topRated: 'Top Rated',
+      action: 'Action',
+      comedy: 'Comedy',
+      horror: 'Horror',
+      romance: 'Romance',
+      scienceFiction: 'Science Fiction',
+    }
   };
 
   if (isLoading) {
     return (
       <div className="netflix-style">
-        <h1 className="page-title">Découvrez Notre Sélection</h1>
+        <h1 className="page-title">{pageTitles[language]}</h1>
         <div className="loading-container">
           <div className="loading"></div>
         </div>
@@ -147,12 +162,19 @@ function About() {
 
   return (
     <div className="netflix-style">
-      <h1 className="page-title">Découvrez Notre Sélection</h1>
+      <h1 className="page-title">{pageTitles[language]}</h1>
+      <div className="language-toggle" style={{ textAlign: 'right', padding: '20px' }}>
+        <button
+          onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')}
+        >
+          {language === 'fr' ? 'English' : 'Français'}
+        </button>
+      </div>
       <div className="content">
         {Object.entries(moviesByCategory).map(([category, movies]) => (
           <MovieRow
             key={category}
-            title={categoryTitles[category]}
+            title={categoryTitles[language][category]}
             movies={movies}
           />
         ))}

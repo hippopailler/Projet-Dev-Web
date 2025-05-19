@@ -4,6 +4,7 @@ import logger from 'morgan';
 import cors from 'cors';
 import usersRouter from './routes/users.js';
 import moviesRouter from './routes/movies.js';
+import reviewsRouter from './routes/reviews.js';
 import { routeNotFoundJsonHandler } from './services/routeNotFoundJsonHandler.js';
 import { jsonErrorHandler } from './services/jsonErrorHandler.js';
 import { appDataSource } from './datasource.js';
@@ -27,6 +28,7 @@ appDataSource
     });
     apiRouter.use('/users', usersRouter);
     apiRouter.use('/movies', moviesRouter);
+    apiRouter.use('/reviews', reviewsRouter);
 
     // Register API router
     app.use('/api', apiRouter);
@@ -41,6 +43,18 @@ appDataSource
     // Register 404 middleware and error handler
     app.use(routeNotFoundJsonHandler); // this middleware must be registered after all routes to handle 404 correctly
     app.use(jsonErrorHandler); // this error handler must be registered after all middleware to catch all errors
+
+    // Add these lines after the definition of your routes
+    app.use((err, req, res, next) => {
+      console.error('Erreur serveur:', err);
+      res.status(500).json({
+        message: 'Erreur serveur',
+        error:
+          process.env.NODE_ENV === 'development'
+            ? err.message
+            : 'Internal Server Error',
+      });
+    });
 
     const port = parseInt(process.env.PORT || '8080');
 

@@ -16,19 +16,20 @@
   margin-bottom: 40px;
   text-transform: uppercase;
   letter-spacing: 4px;
-  text-shadow: 0 0 10px rgba(255,255,255,0.3);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
   animation: glow 2s ease-in-out infinite alternate;
 }
 
 /* Animation du titre */
 @keyframes glow {
   from {
-    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
   }
+
   to {
-    text-shadow: 0 0 20px rgba(255,255,255,0.5),
-                 0 0 30px rgba(255,255,255,0.3),
-                 0 0 40px rgba(255,255,255,0.2);
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
+      0 0 30px rgba(255, 255, 255, 0.3),
+      0 0 40px rgba(255, 255, 255, 0.2);
   }
 }
 
@@ -36,7 +37,8 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: 50px; /* Augmentation de l'espace entre les rangées */
+  gap: 50px;
+  /* Augmentation de l'espace entre les rangées */
 }
 
 /* Style des rangées de films */
@@ -100,7 +102,8 @@
 
 /* Style des cartes de films */
 .movie-card {
-  flex: 0 0 200px; /* Taille fixe pour chaque carte */
+  flex: 0 0 200px;
+  /* Taille fixe pour chaque carte */
   position: relative;
   transition: transform 0.3s ease;
   cursor: pointer;
@@ -126,7 +129,7 @@
   left: 0;
   right: 0;
   padding: 15px;
-  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
   color: white;
   border-radius: 0 0 8px 8px;
   opacity: 0;
@@ -148,13 +151,46 @@
 .loading {
   width: 50px;
   height: 50px;
-  border: 5px solid rgba(255,255,255,0.1);
+  border: 5px solid rgba(255, 255, 255, 0.1);
   border-top: 5px solid #fff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.language-toggle {
+  position: fixed;
+  top: 8px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.language-toggle button {
+  background: rgba(43, 43, 66, 0.8);
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.language-toggle button:hover {
+  background: rgba(18, 24, 117, 0.9);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(9, 104, 229, 0.3);
 }

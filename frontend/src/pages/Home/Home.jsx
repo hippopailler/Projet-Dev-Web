@@ -6,7 +6,7 @@ import MovieCard from '../../components/MovieCard/MovieCard';
 import MovieModal from '../../components/MovieModal/MovieModal';
 import FilterBar from '../../components/FilterBar/FilterBar';
 import bigfootLogo from './bigfoot.png';
-import bigfootTitle from './bigfoottitle.png';
+import bigfootTitle from './Bigfoot-2.png';
 import './Home.css';
 
 const API_KEY = '522d421671cf75c2cba341597d86403a';
@@ -21,6 +21,25 @@ function Home() {
   const [selectedGenre, setSelectedGenre] = useState('');
   const [sortByVotes, setSortByVotes] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const handleRandomMovie = () => {
+    // Animation de sélection aléatoire
+    const duration = 1000; // 1 seconde
+    const startTime = Date.now();
+
+    const animate = () => {
+      if (Date.now() - startTime < duration) {
+        const randomIndex = Math.floor(Math.random() * filteredMovies.length);
+        setSelectedMovie(filteredMovies[randomIndex]);
+        requestAnimationFrame(animate);
+      } else {
+        // Sélection finale
+        const finalIndex = Math.floor(Math.random() * filteredMovies.length);
+        setSelectedMovie(filteredMovies[finalIndex]);
+      }
+    };
+
+    animate();
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -128,7 +147,9 @@ function Home() {
             />
           </div>
           {/* {<AddMovieForm /> && ( */}
-
+          <button className="random-movie-button" onClick={handleRandomMovie}>
+            🎲 Film Aléatoire
+          </button>
           <FilterBar
             searchTerm={searchTerm}
             selectedGenre={selectedGenre}

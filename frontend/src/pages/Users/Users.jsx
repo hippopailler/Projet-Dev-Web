@@ -97,7 +97,7 @@ function Users() {
     try {
       console.log('📝 Tentative inscription avec:', registerForm);
       
-      // Validation côté client
+      
       if (!registerForm.email || !registerForm.password || !registerForm.firstname || !registerForm.lastname) {
         setError('Tous les champs sont obligatoires');
         setLoading(false);

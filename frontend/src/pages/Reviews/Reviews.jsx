@@ -1,7 +1,7 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable no-shadow */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
@@ -104,7 +104,6 @@ function Reviews() {
     }
   };
 
-  // Ajoutez cette fonction pour sélectionner un film
   const handleMovieSelect = (movie) => {
     setSelectedMovie(movie);
     setNewReview((prev) => ({ ...prev, movie_id: movie.id }));
@@ -138,7 +137,7 @@ function Reviews() {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/reviews/new`, // Corrigé : pas de doublon /api
+        `${import.meta.env.VITE_BACKEND_URL}/reviews/new`,
         {
           ...newReview,
           user_id: user.id,
